@@ -1,0 +1,369 @@
+﻿@model ClientesGFT.WebApplication.ViewModels.ClientViewModel
+
+@using ClientesGFT.WebApplication.Enums;
+
+@{
+    string title = "Criação de cliente";
+    if (Model.ViewState == EViewStates.EDIT)
+    {
+        title = "Atualização de cliente";
+    }
+    else if (Model.ViewState == EViewStates.READONLY)
+    {
+        title = "Consulta de cliente";
+    }
+
+    ViewData["Title"] = title;
+    ViewData["ActivePage"] = "operacao";
+
+    string returnUrl = Convert.ToString(ViewData["ReturnUrl"]);
+    if (string.IsNullOrEmpty(returnUrl))
+    {
+        returnUrl = Url.Action("Index", "Operation");
+    }
+
+}
+
+<div class="container-fluid p-0">
+    <div class="card-header">
+        <div class="d-flex align-items-center flex-row">
+            <h3 class="text-start">
+                <a class="text-dark" href="@returnUrl"><i class="fas fa-chevron-left"></i></a>
+            </h3>
+            <h3 class="m-auto">
+                <i class="fas @( Model.ViewState == EViewStates.EDIT ? "fa-user-edit" :
+                                                Model.ViewState == EViewStates.INSERT ? "fa-user-plus" :
+                                                "fa-user-alt")"></i>
+                @title
+            </h3>
+        </div>
+        @if (Model.ViewState != EViewStates.READONLY)
+        {
+            <h5 class="mt-1 text-center text-muted">
+                Os campos com <b class="text-danger">*</b> são obrigatórios.
+            </h5>
+        }
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form id="clientForm" asp-action="SendClient" asp-controller="Operation" method="post" autocomplete="off">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (Model.ViewState == EViewStates.EDIT)
+                        {
+                            <input asp-for="Id" class="form-control" type="hidden" />
+                        }
+                        <input asp-for="ViewState" class="form-control" type="hidden" />
+
+                        @if (Model.ViewState != EViewStates.INSERT)
+                        {
+                            <div class="row col-md-6 m-auto">
+                                <div class="col-sm">
+                                    <p class="text-center"><i class="far fa-clock me-1"></i>Status Atual: <b class="ms-1">@Model.CurrentStatusDisplay</b></p>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="row">
+                            <div class="mb-3 col-md-7">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="Name" class="control-label">Nome Completo</label>
+                                        <input asp-for="Name" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="Name" class="control-label"><b class="text-danger">*</b> Nome Completo</label>
+                                        <input asp-for="Name" class="form-control" />
+                                    }
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-5">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="BirthDate" class="control-label">Data de Nascimento</label>
+                                        <input asp-for="BirthDate" type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="BirthDate" class="control-label"><b class="text-danger">*</b> Data de Nascimento</label>
+                                        <input asp-for="BirthDate" type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" />
+                                    }
+                                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @if (Model.ViewState == EViewStates.READONLY)
+                            {
+                                <label asp-for="Email" class="control-label">Email</label>
+                                <input asp-for="Email" class="form-control" readonly />
+                            }
+                            else
+                            {
+                                <label asp-for="Email" class="control-label"><b class="text-danger">*</b> Email</label>
+                                <input asp-for="Email" class="form-control" />
+                            }
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="Country" class="control-label">País</label>
+                                        <select class="form-select" asp-items="@ViewBag.Countries" id="countriesList" disabled>
+                                            <option disabled selected>- Selecione o Pais -</option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="Country" class="control-label"><b class="text-danger">*</b> País</label>
+                                        <select class="form-select" asp-items="@ViewBag.Countries" id="countriesList">
+                                            <option disabled selected>- Selecione o Pais -</option>
+                                        </select>
+                                    }
+                                    <input asp-for="CountryId" hidden readonly class="form-control" />
+                                    <span asp-validation-for="CountryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="State" class="control-label">Estado</label>
+                                        <select class="form-select" id="statesList" disabled>
+                                            <option disabled selected>- Selecione o Estado -</option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="State" class="control-label"><b class="text-danger">*</b> Estado</label>
+                                        <select class="form-select" id="statesList">
+                                            <option disabled selected>- Selecione o Estado -</option>
+                                        </select>
+                                    }
+                                    <input asp-for="StateId" hidden readonly class="form-control" />
+                                    <span asp-validation-for="StateId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="City" class="control-label">Cidade</label>
+                                        <select class="form-select" id="citiesList" disabled>
+                                            <option disabled selected>- Selecione a Cidade -</option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="City" class="control-label"><b class="text-danger">*</b> Cidade</label>
+                                        <select class="form-select" id="citiesList">
+                                            <option disabled selected>- Selecione a Cidade -</option>
+                                        </select>
+                                    }
+                                    <input asp-for="CityId" hidden readonly class="form-control" />
+                                    <span asp-validation-for="CityId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="District" class="control-label">Bairro</label>
+                                        <input asp-for="District" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="District" class="control-label"><b class="text-danger">*</b> Bairro</label>
+                                        <input asp-for="District" class="form-control" />
+                                    }
+                                    <span asp-validation-for="District" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="Street" class="control-label">Rua</label>
+                                        <input asp-for="Street" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="Street" class="control-label"><b class="text-danger">*</b> Rua</label>
+                                        <input asp-for="Street" class="form-control" />
+                                    }
+                                    <span asp-validation-for="Street" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-3">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="Number" class="control-label">Número</label>
+                                        <input asp-for="Number" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="Number" class="control-label"><b class="text-danger">*</b> Número</label>
+                                        <input asp-for="Number" class="form-control" />
+                                    }
+                                    <span asp-validation-for="Number" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="Complement" class="control-label"></label>
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <input asp-for="Complement" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="Complement" class="form-control" />
+                                    }
+                                    <span asp-validation-for="Complement" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Cep" class="control-label"></label>
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <input asp-for="Cep" mask="cep" placeholder="xxxxx-xxx" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="Cep" mask="cep" placeholder="xxxxx-xxx" class="form-control" />
+                                    }
+                                    <span asp-validation-for="Cep" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <div class="form-group">
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <label asp-for="CPF" class="control-label">CPF</label>
+                                        <input asp-for="CPF" mask="cpf" placeholder="xxx.xxx.xxx-xx" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <label asp-for="CPF" class="control-label"><b class="text-danger">*</b> CPF</label>
+                                        <input asp-for="CPF" mask="cpf" placeholder="xxx.xxx.xxx-xx" class="form-control" />
+                                    }
+                                    <span asp-validation-for="CPF" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="RG" class="control-label"></label>
+                                    @if (Model.ViewState == EViewStates.READONLY)
+                                    {
+                                        <input asp-for="RG" mask="rg" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="RG" mask="rg" class="form-control" />
+                                    }
+                                    <span asp-validation-for="RG" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-6 m-auto">
+                            <div class="col-sm">
+                                <table id="tbPhones" class="table table-striped data-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" colspan="2">
+                                                <i class="fas fa-phone-alt me-2"></i>Telefones
+                                                @if (Model.ViewState != EViewStates.READONLY)
+                                                {
+                                                    <b class="text-danger">*</b>
+                                                }
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Phones?.Count; i++)
+                                        {
+                                            var number = Model.Phones[i]?.Number;
+                                            <tr class="text-center">
+                                                <td colspan="@(Model.ViewState != EViewStates.READONLY ? 1 : 2)">
+                                                    @number
+                                                    <input id="PhonesNumbers_@i" name="PhonesNumbers[@i]" value="@number" class="form-control phone" readonly type="hidden" />
+                                                </td>
+                                                @if (Model.ViewState != EViewStates.READONLY)
+                                                {
+                                                    <td>
+                                                        <button data-phone="@number" type="button" class="deletePhone btn btn-light-outline text-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                            Excluir
+                                                        </button>
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+
+                        @if (Model.ViewState != EViewStates.READONLY)
+                        {
+                            <div class="row col-md-6 m-auto">
+                                <div class="col-sm">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" mask="telefone" id="inputPhone" placeholder="Digite o telefone" aria-label="Telefone">
+                                        <button disabled class="btn btn-outline-secondary" type="button" id="btnAddPhone">Adicionar</button>
+                                    </div>
+                                    <span asp-validation-for="PhonesNumbers" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="form-group d-flex justify-content-center">
+                                <input type="submit" value="@(Model.ViewState == EViewStates.EDIT? "Atualizar" : "Cadastrar")" class="btn btn-lg btn-primary" />
+                            </div>
+                        }
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/cfp-custom-validation.js" asp-append-version="true"></script>
+
+    <script src="~/js/mask.js" asp-append-version="true"></script>
+    <script src="~/js/adress.js" asp-append-version="true"></script>
+    <script src="~/js/birthdate.js" asp-append-version="true"></script>
+
+    <script src="~/js/phone.js" asp-append-version="true"></script>
+}

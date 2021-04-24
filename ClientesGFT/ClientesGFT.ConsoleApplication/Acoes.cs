@@ -1,0 +1,16 @@
+﻿namespace ClientesGFT.ConsoleApplication
+{
+    public enum Acoes
+    {
+        CONSULTAR_CLIENTE,
+        CADASTRAR_NOVO_CLIENTE,
+        ATUALIZAR_CLIENTE,
+        MANDAR_PARA_GERENCIA,
+        APROVAR_OU_ENVIAR_PARA_RISCO,
+        APROVAR_CLIENTE_INTERNACIONAL,
+        APROVAR_CLIENTE_NACIONAL_E_INTERNACIONAL, //somente ADMIN
+        REPROVAR_CLIENTE,
+        MANDAR_PARA_CORRECAO_DE_PERFIL,
+        SAIR
+    }
+}

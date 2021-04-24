@@ -1,0 +1,122 @@
+﻿@model IEnumerable<ClientesGFT.WebApplication.ViewModels.ClientViewModel>
+
+@{
+    ViewData["Title"] = "Operação";
+    ViewData["ActivePage"] = "operacao";
+}
+
+<div class="container-fluid p-0">
+
+    <h1 class="mb-3 text-center"> <i class="fas fa-box"></i> Operação</h1>
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="d-flex flex-row card-header">
+                    <h3> <i class="fas fa-caret-right"></i> Clientes Disponíveis</h3>
+                    <h5 class="flex-fill text-end">
+                        <a class="text-success register-button" asp-action="Create"><i class="fas fa-user-plus"></i> Cadastrar novo cliente</a>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped data-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Id)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.IsInternational)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CPF)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CurrentStatus)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ModifiedDate)
+                                </th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var client in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => client.Id)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => client.IsInternational)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => client.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => client.CPF)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => client.CurrentStatus)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => client.ModifiedDate)
+                                    </td>
+                                    <td class="actions">
+                                        <a asp-action="Select" asp-controller="Operation" asp-route-id="@client.Id"
+                                           class="btn btn-light-outline text-secondary" title="Consultar">
+                                            <i class="fas fa-search"></i>
+                                        </a>
+                                        @if (client.IsEnableToModify)
+                                        {
+                                            <form asp-action="Edit" asp-controller="Operation" asp-route-id="@client.Id" method="post">
+                                                <button type="submit" class="btn btn-light-outline text-warning" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </form>
+                                            <form asp-action="Approve" asp-controller="Operation" asp-route-id="@client.Id" method="post">
+                                                <button type="submit" class="btn btn-light-outline text-success" title="Enviar para Gerência">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            @if (client.CurrentStatus == ClientesGFT.Domain.Enums.EStatus.EM_CADASTRO)
+                                            {
+                                                <form asp-action="Delete" asp-controller="Operation" asp-route-id="@client.Id" method="post">
+                                                    <button type="submit" class="btn btn-light-outline text-danger" title="Excluir">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+@*<div class="text-center">
+        <h1 class="display-4"><i class="fas fa-users"></i> Clientes</h1>
+        <h5>
+            <a class="text-success" asp-action="Create"><i class="fas fa-plus"></i> Criar novo cliente</a>
+        </h5>
+    </div>
+
+    <br />*@
+
+
+
+@section Scripts {
+    <script src="~/js/data-table.js" asp-append-version="true"></script>
+}

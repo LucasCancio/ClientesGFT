@@ -1,0 +1,12 @@
+USE ClientesGFT
+GO
+CREATE OR ALTER FUNCTION FC_FormatarDocumento
+(
+	@Documento VARCHAR(MAX)
+)
+RETURNS VARCHAR(MAX)
+AS
+BEGIN
+	RETURN REPLACE(REPLACE(@Documento,'.',''),'-','');
+END
+GO

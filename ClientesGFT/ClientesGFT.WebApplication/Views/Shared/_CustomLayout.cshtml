@@ -1,0 +1,191 @@
+﻿@using ClientesGFT.Domain.Enums;
+
+
+@using System.Security.Claims;
+
+@{
+    var stringfyRoles = User.FindFirst("Roles")?.Value;
+    var roles = ClientesGFT.Domain.Util.EnumHelper.PerfilStringParaList(stringfyRoles);
+
+    var name = User.FindFirst(ClaimTypes.Name)?.Value;
+    string activePage = Convert.ToString(ViewData["ActivePage"]) ?? "fluxo";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+    <meta name="author" content="AdminKit">
+    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <!-- Favicon -->
+    <link rel="icon" href="~/images/logo.png" type="image/png">
+
+    <title>@ViewData["Title"] | CLientesGFT</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- Data Table -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+
+    <link href="~/template/css/app.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-content js-simplebar">
+                <a class="sidebar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo-white.png" alt="logo" width="30" height="24">
+                    <span class="align-middle">ClientesGFT</span>
+                </a>
+
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">
+                        Páginas
+                    </li>
+
+                    <li class="sidebar-item @(activePage == "fluxo" ? "active" : "")">
+                        <a class="sidebar-link" asp-area="" asp-controller="Home" asp-action="Index">
+                            <i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">Fluxo de Aprovação</span>
+                        </a>
+                    </li>
+                    @if (roles.Contains(ERoles.OPERACAO) || roles.Contains(ERoles.ADMINISTRACAO))
+                    {
+                <li class="sidebar-item @(activePage == "operacao" ? "active" : "")">
+                    <a class="sidebar-link" asp-area="" asp-controller="Operation" asp-action="Index">
+                        <i class="align-middle" data-feather="package"></i> <span class="align-middle">Operação</span>
+                    </a>
+                </li>}
+                    <li class="sidebar-item @(activePage == "aprovacao" ? "active" : "")">
+                        <a class="sidebar-link" asp-area="" asp-controller="Approval" asp-action="Index">
+                            <i class="align-middle" data-feather="thumbs-up"></i> <span class="align-middle">Aprovação</span>
+                        </a>
+                    </li>
+
+
+                    @if (roles.Contains(ERoles.ADMINISTRACAO))
+                    {
+                        <li class="sidebar-header">
+                            Administrativo
+                        </li>
+
+                        @*<li class="sidebar-item @(activePage.Contains("endereços") ? "active" : "")">
+                            <a href="#adress" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                                <i class="align-middle" data-feather="map"></i> <span class="align-middle">Endereços</span>
+                            </a>
+                            <ul id="adress" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+                                <li class="sidebar-item @(activePage == "endereços-paises" ? "active" : "")"><a class="sidebar-link">Paises</a></li>
+                                <li class="sidebar-item @(activePage == "endereços-cidades" ? "active" : "")"><a class="sidebar-link">Cidades</a></li>
+                                <li class="sidebar-item @(activePage == "endereços-estados" ? "active" : "")"><a class="sidebar-link">Estados</a></li>
+                            </ul>
+                        </li>*@
+
+                        <li class="sidebar-item @(activePage == "usuarios" ? "active" : "")">
+                            <a class="sidebar-link" asp-area="" asp-controller="Users" asp-action="Index">
+                                <i class="align-middle" data-feather="users"></i> <span class="align-middle">Usuários</span>
+                            </a>
+                        </li>
+                     }
+
+
+                </ul>
+                <div class="sidebar-cta">
+                    <div class="sidebar-cta-content">
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-item">
+                                <a class="logoff-button sidebar-link" asp-area="" asp-controller="Account" asp-action="Logout">
+                                    <i class="align-middle" data-feather="power"></i> <span class="align-middle">Deslogar</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main">
+            <nav class="navbar navbar-expand navbar-light navbar-bg">
+                <a class="sidebar-toggle d-flex">
+                    <i class="hamburger align-self-center"></i>
+                </a>
+
+
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav navbar-align">
+                        <li class="nav-item dropdown">
+                            <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                                <i class="align-middle" data-feather="settings"></i>
+                            </a>
+
+                            <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> <span class="text-dark">@name</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Index"><i class="align-middle me-1" data-feather="user"></i> Perfil</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="content">
+                <div class="container-fluid p-0">
+                    @RenderBody()
+                </div>
+            </main>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row text-muted">
+                        <div class="col-6 text-end">
+                            <p class="mb-0">
+                                <a asp-area="" asp-controller="Home" asp-action="Index" class="text-muted"><strong>2021 - ClientesGFT</strong></a> &copy;
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- JQuery -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- JQuery Mask -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+    <!-- Template -->
+    <script src="~/template/js/app.js"></script>
+
+    <!-- Bootstrap -->
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>-->
+
+    <!-- Data Tables -->
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/6f90f4e53c.js" crossorigin="anonymous"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+
+    @*<script src="~/template/js/template.js"></script>*@
+
+    @RenderSection("Scripts", required: false)
+
+
+</body>
+</html>

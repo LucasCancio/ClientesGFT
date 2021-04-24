@@ -1,0 +1,142 @@
+﻿@using ClientesGFT.Domain.Enums;
+
+@model ClientesGFT.WebApplication.ViewModels.HomeViewModel
+
+
+@{ ViewData["Title"] = "Home";
+    ViewData["ActivePage"] = "fluxo"; }
+
+<div class="container-fluid p-0">
+    <h1 class="h1 mb-3 text-center"><i class="far fa-clipboard"></i> Fluxo de Aprovação</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="card col-8 m-auto mb-4">
+                <div class="card-body">
+                    <form id="filterForm" enctype="multipart/form-data" asp-action="DownloadReport" asp-controller="Home" method="post">
+
+                        <div class="row align-items-center">
+                            <div class="mb-3 col-md-5">
+                                <div class="form-group">
+                                    <input type="date" asp-for="Filter.StartDate" class="form-control">
+                                    <span asp-validation-for="Filter.StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-2">
+                                <div class="form-group text-center">
+                                    Até
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-5">
+                                <div class="form-group">
+                                    <input type="date" asp-for="Filter.EndDate" class="form-control">
+                                    <span asp-validation-for="Filter.EndDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-7">
+                                <div class="form-group">
+                                    <label asp-for="Filter.Name" class="col-form-label"><i class="fas fa-user me-1"></i> Nome do Cliente</label>
+                                    <input asp-for="Filter.Name" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="Filter.CPF" class="col-form-label"><i class="fas fa-address-card me-1"></i> CPF</label>
+                                    <input mask="cpf" asp-for="Filter.CPF" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Filter.Status" class="col-form-label"><i class="fas fa-clock me-1"></i> Status</label>
+                            <select class="form-select" asp-for="Filter.Status" asp-items="Html.GetEnumSelectList<EStatus>()">
+                            </select>
+                        </div>
+
+                        <div class="row m-auto align-items-center justify-content-center">
+                            <div class="mt-3 m-auto d-grid gap-2">
+                                <button id="btnSearch" type="button" class="btn btn-dark text-white">
+                                    <i class="fas fa-search"></i>
+                                    Procurar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>  
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3> <i class="fas fa-search"></i> Fluxos encontrados</h3>                  
+                </div>
+                <div class="card-body">
+                    <table id="fluxosTable" class="table table-striped data-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Usuário Responsável
+                                </th>
+                                <th>
+                                    CPF do Cliente
+                                </th>
+                                <th>
+                                    Cliente
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    Data de Criação
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="containerFluxos" data-url='@Url.Action("GetFluxos","Home")'>
+                            @foreach (var fluxo in Model.Fluxos)
+                            {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => fluxo.User.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => fluxo.Client.CPF)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => fluxo.Client.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => fluxo.Status.Description)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => fluxo.CreateDate)
+                                </td>
+                            </tr>
+}
+                        </tbody>
+                    </table>
+                    <div class="mb-2 d-flex justify-content-center">
+                        <button id="btnDownload" form="filterForm" type="submit" class="btn btn-light-outline text-primary print-button">
+                            <i class="fas fa-file-download"></i>
+                            Baixar relatório
+                        </button>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-center">
+                        <h6 class="text-muted fst-italic">O relátorio independe da ordenação e paginação da tabela acima.</h6>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+</div>
+
+
+
+
+
+
+
+@section Scripts {
+    <script src="~/js/home.js" asp-append-version="true"></script>
+    <script src="~/js/mask.js" asp-append-version="true"></script>
+}

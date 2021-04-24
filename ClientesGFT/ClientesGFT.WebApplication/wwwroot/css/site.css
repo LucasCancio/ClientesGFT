@@ -1,0 +1,62 @@
+﻿table {
+    empty-cells: show;
+}
+
+table tr {
+        line-height: 100%;
+}
+
+td {
+    vertical-align: middle;
+}
+
+td.actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.sidebar-cta-content {
+    background: none;
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.logoff-button svg,
+.logoff-button span {
+    transition: color .5s;
+}
+
+.logoff-button:hover svg,
+.logoff-button:hover span {
+    color: #dc3545 !important;
+}
+
+.form-label svg {
+    margin-right: 5px;
+}
+
+a:hover {
+    text-decoration: none !important;
+}
+
+.register-button {
+    transition: color .5s;
+}
+
+    .register-button:hover {
+        color: #31ca54 !important;
+    }
+
+.print-button {
+    transition: color .5s;
+}
+
+    .print-button:hover {
+        color: #89aada !important;
+    }
+
+empty-row {
+    height: 100%;
+}

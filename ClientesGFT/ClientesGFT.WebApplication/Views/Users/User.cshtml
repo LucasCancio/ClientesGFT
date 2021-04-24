@@ -1,0 +1,134 @@
+﻿@model ClientesGFT.WebApplication.ViewModels.UserViewModel
+
+@using ClientesGFT.WebApplication.Enums;
+
+@{
+    bool isEdit = Model != null && Model.HasId;
+    string title = (isEdit ? "Atualização" : "Criação") + " de usuário";
+
+    ViewData["Title"] = title;
+    ViewData["ActivePage"] = "usuarios";
+}
+
+<div class="container-fluid p-0">
+    <div class="card-header">
+        <div class="d-flex align-items-center flex-row">
+            <h3 class="text-start">
+                <a class="text-dark" asp-controller="Users" asp-action="Index"><i class="fas fa-chevron-left"></i></a>
+            </h3>
+            <h3 class="m-auto">
+                <i class="fas @( isEdit ? "fa-user-edit" : "fa-user-plus")"></i>
+                @title
+            </h3>
+        </div>
+        <h5 class="mt-1 text-center text-muted">
+            Os campos com <b class="text-danger">*</b> são obrigatórios.
+        </h5>
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form id="userForm" asp-action="SendUser" asp-controller="Users" method="post" autocomplete="off">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @if (isEdit)
+                        {
+                            <input asp-for="Id" class="form-control" type="hidden" />
+                        }
+
+                        <div class="mb-3 form-group">
+                            <label asp-for="Name" class="control-label"><b class="text-danger">*</b> Nome Completo</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Login" class="control-label"><b class="text-danger">*</b> Usuário</label>
+                                    <input asp-for="Login" class="form-control" />
+                                    <span asp-validation-for="Login" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Password" class="control-label"><b class="text-danger">*</b> Senha</label>
+                                    <input asp-for="Password" type="password" class="form-control" />
+                                    @if (isEdit)
+                                    {
+                                        <div id="passwordHelp" class="form-text">Deixe em branco para não mudar a senha.</div>
+                                    }
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="row col-md-6 m-auto">
+                            <div class="col-sm">
+                                <table id="tbRoles" class="table table-striped data-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" colspan="2">
+                                                <i class="fas fa-suitcase me-2"></i>Perfils
+                                                <b class="text-danger">*</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Roles?.Count; i++)
+                                        {
+                                            var role = Model.Roles[i];
+                                            <tr class="text-center">
+                                                <td class="role">
+                                                    <span>@role.DisplayName</span>
+                                                    <input id="RolesIds_@i" name="RolesIds[@i]" value="@role.Id" class="form-control" readonly type="hidden" />
+                                                </td>
+                                                <td>
+                                                    <button data-role-id="@role.Id" type="button" class="deleteRole btn btn-light-outline text-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                        Excluir
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                        <div class="row col-md-6 m-auto">
+                            <div class="col-sm">
+                                <div class="input-group mb-3">
+                                    <select class="form-select"  id="selectRole" asp-items="@ViewBag.Roles">
+                                        <option disabled selected>- Selecione o Perfil -</option>
+                                    </select>
+                                    <button class="btn btn-outline-secondary" type="button" id="btnAddRole">Adicionar</button>
+                                </div>
+                                <span asp-validation-for="RolesIds" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <div class="form-group d-flex justify-content-center">
+                            <input type="submit" value="@(isEdit? "Atualizar" : "Cadastrar")" class="btn btn-lg btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/role.js" asp-append-version="true"></script>
+}

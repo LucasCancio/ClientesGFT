@@ -1,0 +1,229 @@
+﻿@model ClientesGFT.WebApplication.ViewModels.ApprovalViewModel
+
+@using ClientesGFT.Domain.Enums;
+@{
+    ViewData["Title"] = "Aprovação de Clientes";
+    ViewData["ActivePage"] = "aprovacao";
+}
+
+<div class="container-fluid p-0">
+    <h1 class="mb-3 text-center"><i class="far fa-thumbs-up"></i> Aprovação de Clientes</h1>
+    @if (@TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert-message d-flex">
+                <strong class="me-3"><i class="fas fa-exclamation-circle"></i> Erro</strong>
+                <span class="m-auto">@TempData["Error"]</span>
+            </div>
+        </div>
+    }
+    else if (@TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert-message d-flex">
+                <strong class="me-3"><i class="fas fa-exclamation-circle"></i> Atenção</strong>
+                <span class="m-auto">@TempData["Warning"]</span>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-12">
+            @if (Model.CanSeeAproveTable)
+            {
+                <div class="card">
+                    <div class="card-body">
+
+                        <h3><i class="fas fa-caret-right"></i> Clientes Disponíveis</h3>
+                        <table class="table table-striped data-table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Internacional?</th>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>Status Atual</th>
+                                    <th>Última modificação</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var client in Model.ClientsToApprove)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => client.Id)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => client.IsInternacional)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => client.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => client.CPF)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => client.CurrentStatus.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => client.ModifiedDate)
+                                        </td>
+                                        <td class="actions">
+                                            <a asp-action="Select" asp-controller="Operation" asp-route-returnUrl="@Url.Action("Index","Approval")" asp-route-id="@client.Id"
+                                               class="btn btn-light-outline text-secondary" title="Consultar">
+                                                <i class="fas fa-search"></i>
+                                            </a>
+                                            @if (client.IsEnableToModify)
+                                            {
+                                                <form asp-action="Approve" asp-controller="Approval" method="post" asp-route-id="@client.Id">
+                                                    <button type="submit" class="btn btn-light-outline text-success" title="Aprovar">
+                                                        <i class="far fa-thumbs-up"></i>
+                                                    </button>
+                                                </form>
+                                                <form asp-action="SendForCorrection" asp-controller="Approval" asp-route-id="@client.Id" method="post">
+                                                    <button type="submit" class="btn btn-light-outline text-warning" title="Solicitar Correção">
+                                                        <i class="fas fa-wrench"></i>
+                                                    </button>
+                                                </form>
+                                                <form asp-action="Decline" asp-controller="Approval" asp-route-id="@client.Id" method="post">
+                                                    <button type="submit" class="btn btn-light-outline text-danger" title="Reprovar">
+                                                        <i class="far fa-thumbs-down"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>}
+            <div class="card">
+                <div class="card-body">
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingOne">
+                                <button class="accordion-button collapsed text-success" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                    <i class="fas fa-user-check me-2"></i> Clientes aprovados
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <table class="table table-striped data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Internacional?</th>
+                                                <th>Nome</th>
+                                                <th>CPF</th>
+                                                <th>Status Atual</th>
+                                                <th>Última modificação</th>
+                                                <th class="text-center">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var client in Model.ApprovedClients)
+                                            {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.Id)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.IsInternacional)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.CPF)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.CurrentStatus.Description)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.ModifiedDate)
+                                                </td>
+                                                <td class="actions">
+                                                    <a asp-action="Select" asp-controller="Operation" asp-route-returnUrl="@Url.Action("Index","Approval")" asp-route-id="@client.Id"
+                                                       class="btn btn-light-outline text-secondary" title="Consultar">
+                                                        <i class="fas fa-search"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingTwo">
+                                <button class="accordion-button collapsed text-danger" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                    <i class="fas fa-user-times me-2"></i> Clientes reprovados
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <table class="table table-striped data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Internacional?</th>
+                                                <th>Nome</th>
+                                                <th>CPF</th>
+                                                <th>Status Atual</th>
+                                                <th>Última modificação</th>
+                                                <th class="text-center">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var client in Model.RepprovedClients)
+                                            {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.Id)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.IsInternacional)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.CPF)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.CurrentStatus.Description)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => client.ModifiedDate)
+                                                </td>
+                                                <td class="actions">
+                                                    <a asp-action="Select" asp-controller="Operation" asp-route-returnUrl="@Url.Action("Index","Approval")" asp-route-id="@client.Id"
+                                                       class="btn btn-light-outline text-secondary" title="Consultar">
+                                                        <i class="fas fa-search"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script src="~/js/data-table.js" asp-append-version="true"></script>
+}
